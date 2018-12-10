@@ -469,6 +469,20 @@ int main()
 					else if (field[x][y].type == 3) cout << "Horseman" << endl;
 					if (field[x][y].player == 1) cout << "FRIEND" << endl;
 					else if (field[x][y].player == 2) cout << "ENEMY" << endl;
+					//Unit info:
+					if (field[x][y].type == 1 || field[x][y].type == 2 || field[x][y].type == 3)
+					{
+						hand *sptr = first_player;
+						if (field[x][y].player == 2) sptr = second_player;
+						while (sptr->u->x != x || sptr->u->y != y) sptr = sptr->next;
+						cout << endl;
+						cout << "Specifications:" << endl;
+						cout << "HP: "<< sptr->u->hp << endl;
+						cout << "DF: " << sptr->u->def << endl;
+						cout << "AT: " << sptr->u->attack << endl;
+						cout << "OD: " << sptr->u->od << endl;
+					}
+					//
 					xt = x;
 					yt = y;
 					cout << endl;
@@ -575,6 +589,21 @@ int main()
 					else if (field[xm][ym].type == 7) cout << "Move there?" << endl;
 					if (field[xm][ym].player == 1) cout << "FRIEND" << endl;
 					else if (field[xm][ym].player == 2) cout << "ENEMY" << endl;
+					//Unit info:
+					if (field[xm][ym].type == 1 || field[xm][ym].type == 2 || field[xm][ym].type == 3)
+					{
+						hand *sptr = first_player;
+						if (field[xm][ym].player == 2) sptr = second_player;
+						while (sptr->u->x != xm || sptr->u->y != ym) sptr = sptr->next;
+						cout << endl;
+						cout << "Specifications:" << endl;
+						cout << "HP: " << sptr->u->hp << endl;
+						cout << "DF: " << sptr->u->def << endl;
+						cout << "AT: " << sptr->u->attack << endl;
+						cout << "OD: " << sptr->u->od << endl;
+					}
+					//
+					cout << endl;
 					if (field[xm][ym].player == 2 && field[xm][ym].reach) cout << "Attack him?" << endl;
 					xt = xm;
 					yt = ym;
@@ -611,6 +640,38 @@ int main()
 						field[x][y].player = -1;
 					}
 					turn = 2;
+					system("cls");
+					//Field generator:
+					cout << "> ";
+					for (i = 0; i < n * 3; i++)
+					{
+						if (xs[i] == '!') cout << i + 1;
+						else cout << ' ';
+					}
+					cout << endl;
+					cout << s << endl;
+					for (i = 0; i < n; i++)
+					{
+						if (ys[i] == '!') cout << i + 1;
+						else cout << ' ';
+						cout << "|";
+						for (j = 0; j < n * 3; j++)
+						{
+							if (field[i][j].type == 0)
+								cout << " ";
+							else if (field[i][j].type == 1)
+								cout << "W";
+							else if (field[i][j].type == 2)
+								cout << "A";
+							else if (field[i][j].type == 3)
+								cout << "H";
+							else
+								cout << "*";
+						}
+						cout << "|" << endl;
+					}
+					cout << ss << endl;
+					//
 				}
 				else if (field[xm][ym].player == 2 && field[xm][ym].reach)
 				{
@@ -645,10 +706,64 @@ int main()
 					}
 					hand *ptr2 = second_player;
 					while (ptr2->u->x != xm || ptr2->u->y != ym) ptr2 = ptr2->next;
-					cout << ptr->u->type << ' ' << ptr->u->hp << " vs " << ptr2->u->type << ' ' << ptr2->u->hp << endl;
+					system("cls");
+					//Field generator:
+					cout << "> ";
+					for (i = 0; i < n * 3; i++)
+					{
+						if (xs[i] == '!') cout << i + 1;
+						else cout << ' ';
+					}
+					cout << endl;
+					cout << s << endl;
+					for (i = 0; i < n; i++)
+					{
+						if (ys[i] == '!') cout << i + 1;
+						else cout << ' ';
+						cout << "|";
+						for (j = 0; j < n * 3; j++)
+						{
+							if (field[i][j].type == 0)
+								cout << " ";
+							else if (field[i][j].type == 1)
+								cout << "W";
+							else if (field[i][j].type == 2)
+								cout << "A";
+							else if (field[i][j].type == 3)
+								cout << "H";
+							else
+								cout << "*";
+						}
+						cout << "|" << endl;
+					}
+					cout << ss << endl;
+					//
+					//Attack:
+					if (ptr->u->type == 1) cout << "PLAYER 1: Warrior deals ";
+					else if (ptr->u->type == 2) cout << "PLAYER 1: Archer deals ";
+					else if (ptr->u->type == 3) cout << "PLAYER 1: Horseman deals ";
+					cout << ptr->u->attack - ptr2->u->def << " damage to PLAYER 2: ";
+					if (ptr2->u->type == 1) cout << "Warrior." << endl;
+					else if (ptr2->u->type == 2) cout << "Archer." << endl;
+					else if (ptr2->u->type == 3) cout << "Horseman." << endl;
 					ptr2->u->hp -= (ptr->u->attack - ptr2->u->def);///!!!
-					if (ptr2->u->hp > 0) ptr->u->hp -= (ptr2->u->attack - ptr->u->def) / 2;
-					cout << ptr->u->type << ' ' << ptr->u->hp << " result " << ptr2->u->type << ' ' << ptr2->u->hp << endl;
+					//
+					//Contr attack:
+					if (ptr2->u->hp > 0)
+					{
+						ptr->u->hp -= (ptr2->u->attack - ptr->u->def) / 2;
+						if (ptr2->u->type == 1) cout << "PLAYER 2: Warrior fight back and deals ";
+						else if (ptr2->u->type == 2) cout << "PLAYER 2: Archer fight back and deals ";
+						else if (ptr2->u->type == 3) cout << "PLAYER 2: Horseman fight back and deals ";
+						cout << (ptr2->u->attack - ptr->u->def) / 2 << " damage." << endl;
+					}
+					else
+					{
+						if (ptr2->u->type == 1) cout << "PLAYER 2: Warrior died." << endl;
+						else if (ptr2->u->type == 2) cout << "PLAYER 2: Archer died." << endl;
+						else if (ptr2->u->type == 3) cout << "PLAYER 2: Horseman died." << endl;
+					}
+					//
 					//If Someone Die:
 					hand *th;
 					if (ptr2->u->hp <= 0)
@@ -744,6 +859,20 @@ int main()
 					else if (field[x][y].type == 3) cout << "Horseman" << endl;
 					if (field[x][y].player == 2) cout << "FRIEND" << endl;
 					else if (field[x][y].player == 1) cout << "ENEMY" << endl;
+					//Unit info:
+					if (field[x][y].type == 1 || field[x][y].type == 2 || field[x][y].type == 3)
+					{
+						hand *sptr = first_player;
+						if (field[x][y].player == 2) sptr = second_player;
+						while (sptr->u->x != x || sptr->u->y != y) sptr = sptr->next;
+						cout << endl;
+						cout << "Specifications:" << endl;
+						cout << "HP: " << sptr->u->hp << endl;
+						cout << "DF: " << sptr->u->def << endl;
+						cout << "AT: " << sptr->u->attack << endl;
+						cout << "OD: " << sptr->u->od << endl;
+					}
+					//
 					xt = x;
 					yt = y;
 					cout << endl;
@@ -850,6 +979,21 @@ int main()
 					else if (field[xm][ym].type == 7) cout << "Move there?" << endl;
 					if (field[xm][ym].player == 2) cout << "FRIEND" << endl;
 					else if (field[xm][ym].player == 1) cout << "ENEMY" << endl;
+					//Unit info:
+					if (field[xm][ym].type == 1 || field[xm][ym].type == 2 || field[xm][ym].type == 3)
+					{
+						hand *sptr = first_player;
+						if (field[xm][ym].player == 2) sptr = second_player;
+						while (sptr->u->x != xm || sptr->u->y != ym) sptr = sptr->next;
+						cout << endl;
+						cout << "Specifications:" << endl;
+						cout << "HP: " << sptr->u->hp << endl;
+						cout << "DF: " << sptr->u->def << endl;
+						cout << "AT: " << sptr->u->attack << endl;
+						cout << "OD: " << sptr->u->od << endl;
+					}
+					//
+					cout << endl;
 					if (field[xm][ym].player == 1 && field[xm][ym].reach) cout << "Attack him?" << endl;
 					xt = xm;
 					yt = ym;
@@ -886,6 +1030,38 @@ int main()
 						field[x][y].player = -1;
 					}
 					turn = 1;
+					system("cls");
+					//Field generator:
+					cout << "> ";
+					for (i = 0; i < n * 3; i++)
+					{
+						if (xs[i] == '!') cout << i + 1;
+						else cout << ' ';
+					}
+					cout << endl;
+					cout << s << endl;
+					for (i = 0; i < n; i++)
+					{
+						if (ys[i] == '!') cout << i + 1;
+						else cout << ' ';
+						cout << "|";
+						for (j = 0; j < n * 3; j++)
+						{
+							if (field[i][j].type == 0)
+								cout << " ";
+							else if (field[i][j].type == 1)
+								cout << "W";
+							else if (field[i][j].type == 2)
+								cout << "A";
+							else if (field[i][j].type == 3)
+								cout << "H";
+							else
+								cout << "*";
+						}
+						cout << "|" << endl;
+					}
+					cout << ss << endl;
+					//
 				}
 				else if (field[xm][ym].player == 1 && field[xm][ym].reach)
 				{
@@ -920,10 +1096,64 @@ int main()
 					}
 					hand *ptr2 = first_player;
 					while (ptr2->u->x != xm || ptr2->u->y != ym) ptr2 = ptr2->next;
-					cout << ptr->u->type << ' ' << ptr->u->hp << " vs " << ptr2->u->type << ' ' << ptr2->u->hp << endl;
+					system("cls");
+					//Field generator:
+					cout << "> ";
+					for (i = 0; i < n * 3; i++)
+					{
+						if (xs[i] == '!') cout << i + 1;
+						else cout << ' ';
+					}
+					cout << endl;
+					cout << s << endl;
+					for (i = 0; i < n; i++)
+					{
+						if (ys[i] == '!') cout << i + 1;
+						else cout << ' ';
+						cout << "|";
+						for (j = 0; j < n * 3; j++)
+						{
+							if (field[i][j].type == 0)
+								cout << " ";
+							else if (field[i][j].type == 1)
+								cout << "W";
+							else if (field[i][j].type == 2)
+								cout << "A";
+							else if (field[i][j].type == 3)
+								cout << "H";
+							else
+								cout << "*";
+						}
+						cout << "|" << endl;
+					}
+					cout << ss << endl;
+					//
+					//Attack:
+					if (ptr->u->type == 1) cout << "PLAYER 2: Warrior deals ";
+					else if (ptr->u->type == 2) cout << "PLAYER 2: Archer deals ";
+					else if (ptr->u->type == 3) cout << "PLAYER 2: Horseman deals ";
+					cout << ptr->u->attack - ptr2->u->def << " damage to PLAYER 1: ";
+					if (ptr2->u->type == 1) cout << "Warrior." << endl;
+					else if (ptr2->u->type == 2) cout << "Archer." << endl;
+					else if (ptr2->u->type == 3) cout << "Horseman." << endl;
 					ptr2->u->hp -= (ptr->u->attack - ptr2->u->def);///!!!
-					if (ptr2->u->hp > 0) ptr->u->hp -= (ptr2->u->attack - ptr->u->def) / 2;
-					cout << ptr->u->type << ' ' << ptr->u->hp << " result " << ptr2->u->type << ' ' << ptr2->u->hp << endl;
+					//
+					//Contr attack:
+					if (ptr2->u->hp > 0)
+					{
+						ptr->u->hp -= (ptr2->u->attack - ptr->u->def) / 2;
+						if (ptr2->u->type == 1) cout << "PLAYER 1: Warrior fight back and deals ";
+						else if (ptr2->u->type == 2) cout << "PLAYER 1: Archer fight back and deals ";
+						else if (ptr2->u->type == 3) cout << "PLAYER 1: Horseman fight back and deals ";
+						cout << (ptr2->u->attack - ptr->u->def) / 2 << " damage." << endl;
+					}
+					else
+					{
+						if (ptr2->u->type == 1) cout << "PLAYER 1: Warrior died." << endl;
+						else if (ptr2->u->type == 2) cout << "PLAYER 1: Archer died." << endl;
+						else if (ptr2->u->type == 3) cout << "PLAYER 1: Horseman died." << endl;
+					}
+					//
 					//Is Someone Die:
 					hand *th;
 					if (ptr2->u->hp <= 0)
